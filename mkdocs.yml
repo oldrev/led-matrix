@@ -9,3 +9,4 @@ nav:
     - 硬件介绍: hardware.md
     - 蓝牙 BLE 协议: ble_protocol.md
     - 应用层报文协议: packages.md
+    - 固件源码构建说明: fw_build.md
