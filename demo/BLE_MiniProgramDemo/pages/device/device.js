@@ -85,12 +85,20 @@ Page({
     },     
     Send: function () {
         var self = this
-        var buffer = new ArrayBuffer(self.data.inputText.length)
-        var dataView = new Uint8Array(buffer)
+        var buffer = new ArrayBuffer(self.data.inputText.length + 8);
+        var dataView = new Uint8Array(buffer);
         for (var i = 0; i < self.data.inputText.length; i++) {
-            dataView[i] = self.data.inputText.charCodeAt(i)
-        }
-        self.sendBytes(dataView);
+            dataView[8 + i] = self.data.inputText.charCodeAt(i)
+        }  
+        dataView[0] = 0x66;
+        dataView[1] = 0x02;
+        dataView[2] = 0x00;
+        dataView[3] = 0x00;
+        dataView[4] = 0x00; //ID = 0x00000001 报文 ID
+        dataView[5] = 0x01; // MESSAGE_SYSTEM_ECHO 0x01 报文类型
+        dataView[6] = buffer.byteLength; 
+        dataView[7] = 0;
+        self.sendBytes(buffer);
     },
     sendBytes: function (buffer) {
         var self = this        
@@ -115,12 +123,14 @@ Page({
                 var sentLength = 0;
                 for (var i = 0; i < buffer.byteLength; i += 20) {
                     var lengthToSend = Math.min(buffer.byteLength - sentLength, 20);
-                    var frameView = new Uint8Array(buffer, i, lengthToSend);
+                    console.log('本帧要发送的字节：' + lengthToSend.toString());                    
+                    var frameBuffer = buffer.slice(i, i + lengthToSend);
+                    console.log(frameBuffer);
                     wx.writeBLECharacteristicValue({
                         deviceId: self.data.connectedDeviceId,
                         serviceId: self.data.services[0].uuid,
                         characteristicId: self.data.characteristics[0].uuid,
-                        value: frameView,
+                        value: frameBuffer,
                         success: function (res) {
                             console.log('发送成功包：' + packageIndex.toString());
                         }
@@ -128,7 +138,7 @@ Page({
                     sentLength += lengthToSend;
                     packageIndex++;
                     // 至少等待 150ms
-                    sleep(150);
+                    self.sleep(250);
                 }
             }
         } else {

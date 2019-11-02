@@ -55,7 +55,6 @@ DMA_HandleTypeDef hdma_spi2_tx;
 
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
-DMA_HandleTypeDef hdma_usart1_tx;
 DMA_HandleTypeDef hdma_usart2_tx;
 DMA_HandleTypeDef hdma_usart2_rx;
 
@@ -81,33 +80,47 @@ void TaskProc_Default(void const * argument);
 void TaskProc_Display(void const * argument);
 
 /* USER CODE BEGIN PFP */
-static int MsgProc_Display_Fill(const void* args);
-static int MsgProc_Display_SetPixel(const void* args);
-static int MsgProc_Display_SetPixelXY(const void* args);
+static int MsgProc_System_Echo(const Comm_RemoteHeader* header, const void* args);
+static int MsgProc_Display_Fill(const Comm_RemoteHeader* header, const void* args);
+static int MsgProc_Display_SetPixel(const Comm_RemoteHeader* header, const void* args);
+static int MsgProc_Display_SetPixelXY(const Comm_RemoteHeader* header, const void* args);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-static int MsgProc_Display_Fill(const void* args) {
-    const uint8_t* pColorIndex = (const uint8_t*)args;
-    Display_Fill(&g_display[0], *pColorIndex);
+static int MsgProc_System_Echo(const Comm_RemoteHeader* header, const void* args) {
+    if(Comm_ReplyPackage(header->ID, header->Type, args, header->Size - COMM_REMOTE_PACKAGE_HEADER_SIZE) != 0) {
+        return -1;
+    }
     return 0;
 }
 
-static int MsgProc_Display_SetPixel(const void* args) {
+static int MsgProc_Display_Fill(const Comm_RemoteHeader* header, const void* args) {
+    const uint8_t* pColorIndex = (const uint8_t*)args;
+    if(Display_Fill(&g_display[0], *pColorIndex) != 0) {
+        return -1;
+    }
+    return 0;
+}
+
+static int MsgProc_Display_SetPixel(const Comm_RemoteHeader* header, const void* args) {
     const uint8_t* buf = (const uint8_t*)args;
     const uint16_t* pixelIndex = (const uint16_t*)buf;
     const uint8_t* colorIndex = buf + 2;
-    Display_SetPixel(&g_display[0], *pixelIndex, *colorIndex);
+    if(Display_SetPixel(&g_display[0], *pixelIndex, *colorIndex) != 0) {
+        return -1;
+    }
     return 0;
 }
 
-static int MsgProc_Display_SetPixelXY(const void* args) {
+static int MsgProc_Display_SetPixelXY(const Comm_RemoteHeader* header, const void* args) {
     const uint8_t* buf = (const uint8_t*)args;
     const uint16_t* x = (const uint16_t*)buf;
     const uint16_t* y = (const uint16_t*)(buf + 2);
     const uint8_t* colorIndex = buf + 4;
-    Display_SetPixelXY(&g_display[0], *x, *y, *colorIndex);
+    if(Display_SetPixelXY(&g_display[0], *x, *y, *colorIndex) != 0) {
+        return -1;
+    }
     return 0;
 }
 
@@ -154,12 +167,12 @@ int main(void)
     // 恢复默认设置
     memcpy(&g_appSettings, &APP_SETTINGS_DEFAULT, sizeof(g_appSettings));
     
-    //初始化蓝牙模�???????
+    //初始化蓝牙模�????????
     if (JDY08_Init(&huart2, &hdma_usart2_rx) != 0) {
         Error_Handler();
     }
 
-    // 初始化显示模�???????
+    // 初始化显示模�????????
     if (Display_Init(&g_display[0], &g_appSettings.DisplaySettings, &hspi1) != 0) {
         Error_Handler();
     }
@@ -410,9 +423,6 @@ static void MX_DMA_Init(void)
   /* DMA1_Channel3_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Channel3_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel3_IRQn);
-  /* DMA1_Channel4_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Channel4_IRQn, 5, 0);
-  HAL_NVIC_EnableIRQ(DMA1_Channel4_IRQn);
   /* DMA1_Channel5_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Channel5_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel5_IRQn);
@@ -480,8 +490,13 @@ static void MX_GPIO_Init(void)
 /* USER CODE END Header_TaskProc_Default */
 void TaskProc_Default(void const * argument)
 {
+    
+    
+    
+    
+
   /* USER CODE BEGIN 5 */
-    // 初始化通讯模块
+    // 初始化�?�讯模块
     if(Comm_Init(g_cmdBusHandle) != 0) {
         Error_Handler();
     }
@@ -489,16 +504,18 @@ void TaskProc_Default(void const * argument)
     osEvent event;
     /* Infinite loop */
     for (;;) {
+        osThreadYield();
         event = osMessageGet(g_cmdBusHandle, osWaitForever); // wait for message
         if (event.status == osEventMessage) {
-            // 解析�?
+            // 解析�??
             Comm_RemoteHeader header = { 0 };
             Comm_ParsePackageHeader(event.value.p, &header);
             const uint8_t* arguments = ((const uint8_t*)event.value.p) + COMM_REMOTE_PACKAGE_HEADER_SIZE;
             switch (header.Type) {
-                case MESSAGE_DISPLAY_FILL: MsgProc_Display_Fill(arguments); break;
-                case MESSAGE_DISPLAY_SET_PIXEL: MsgProc_Display_SetPixel(arguments); break;
-                case MESSAGE_DISPLAY_SET_PIXELXY: MsgProc_Display_SetPixelXY(arguments); break;
+                case MESSAGE_SYSTEM_ECHO: MsgProc_System_Echo(&header, arguments); break;
+                case MESSAGE_DISPLAY_FILL: MsgProc_Display_Fill(&header, arguments); break;
+                case MESSAGE_DISPLAY_SET_PIXEL: MsgProc_Display_SetPixel(&header, arguments); break;
+                case MESSAGE_DISPLAY_SET_PIXELXY: MsgProc_Display_SetPixelXY(&header, arguments); break;
                 default: break;
             }
         }
@@ -527,7 +544,7 @@ void TaskProc_Display(void const * argument)
             displayTimer = HAL_GetTick();
         }
 
-        // 已连接则指示灯每 300ms 闪烁�????????次，未连接则 1500ms 闪烁�????????�????????
+        // 已连接则指示灯每 300ms 闪烁�?????????次，未连接则 1500ms 闪烁�?????????�?????????
         uint32_t indicatorInterval = JDY08_IsConnected() ? 300 :
                     1500;
                     if (HAL_GetTick() - indicatorTimer >= indicatorInterval) {

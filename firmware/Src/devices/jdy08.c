@@ -223,6 +223,13 @@ int JDY08_BeginDataRX()
     return 0;
 }
 
+int JDY08_Transmit(const void* buf, uint16_t bufSize) 
+{
+    if (HAL_UART_Transmit_DMA(g_device.Uart, (uint8_t*)buf, bufSize) != HAL_OK) {
+        return -1;
+    }
+    return 0;
+}
 
 int JDY08_OnReceived()
 {

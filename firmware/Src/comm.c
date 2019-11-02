@@ -5,6 +5,7 @@
 #include "stm32f1xx_hal_conf.h"
 
 #include "comm.h"
+#include "devices/jdy08.h"
 
 
 Comm g_comm;
@@ -33,11 +34,8 @@ int Comm_ReceiveFrame(const void* frameBuffer, uint16_t frameSize) {
     // 还有数据没有接收完成，说明在接收半途
     Comm_PackageBuffer* buffer = &g_comm.Buffer;
     buffer->ReceivedOn = HAL_GetTick();
-    if(buffer->Size - buffer->ReceivedSize > 0) {
-        memcpy(buffer->Package + buffer->ReceivedSize, frameBuffer, frameSize);
-        buffer->ReceivedSize += frameSize;
-    }
-    else { // 其他情况是开始接收
+    uint16_t packageRestSize = buffer->Size - buffer->ReceivedSize;
+    if(packageRestSize == 0) { // 开始接收第一帧
         if(frameSize < COMM_REMOTE_PACKAGE_HEADER_SIZE) {
             goto __RECEIVED_BAD_FRAME;
         }
@@ -54,6 +52,10 @@ int Comm_ReceiveFrame(const void* frameBuffer, uint16_t frameSize) {
         buffer->Size = ph.Size < COMM_PACKAGE_CAPACITY ? ph.Size : COMM_PACKAGE_CAPACITY;
         buffer->ReceivedSize = frameSize;
         memcpy(buffer->Package, frameBuffer, frameSize);
+    }
+    else { //接收半途中
+        memcpy(buffer->Package + buffer->ReceivedSize, frameBuffer, frameSize);
+        buffer->ReceivedSize += frameSize;
     }
 
     if(buffer->ReceivedSize >= buffer->Size) {
@@ -77,4 +79,32 @@ void Comm_ParsePackageHeader(const void* buf, Comm_RemoteHeader* header) {
     header->ID = *((uint32_t*)(bytes + 1));
     header->Type = bytes[5];
     header->Size = *((uint16_t*)(bytes + 6));
+}
+
+void Comm_PackPackageHeader(const Comm_RemoteHeader* header, void* buf) {
+    uint8_t* bytes = (uint8_t *)buf;
+    bytes[0] = COMM_REMOTE_HEADER_MAGIC;
+    memcpy(bytes + 1, &header->ID, sizeof(uint32_t));
+    bytes[5] = header->Type;
+    memcpy(bytes + 6, &header->Size, sizeof(uint16_t));
+}
+
+
+int Comm_SendPackage(uint8_t packageType, const void* body, uint16_t bodySize) {
+    return 0;
+}
+
+int Comm_ReplyPackage(uint32_t packageID, uint8_t packageType, const void* body, uint16_t bodySize) {
+    uint16_t packageSize = bodySize + COMM_REMOTE_PACKAGE_HEADER_SIZE;
+    Comm_RemoteHeader header = {
+        .Type = packageType,
+        .ID =   packageID,
+        .Size = packageSize,
+    };
+    Comm_PackPackageHeader(&header, g_comm.TXBuffer);
+    memcpy(g_comm.TXBuffer + COMM_REMOTE_PACKAGE_HEADER_SIZE, body, bodySize);
+    if(JDY08_Transmit(g_comm.TXBuffer, packageSize) != 0) {
+        return -1;
+    }
+    return 0;
 }

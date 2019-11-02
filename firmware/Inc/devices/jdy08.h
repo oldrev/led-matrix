@@ -33,3 +33,5 @@ int JDY08_EnsureClass(int* resetRequired);
 
 int JDY08_Reset();
 int JDY08_IsConnected();
+
+int JDY08_Transmit(const void* buf, uint16_t bufSize);
