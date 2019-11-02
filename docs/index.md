@@ -1,5 +1,7 @@
 # 首页
 
+**本项目文档使用 mkdocs 生成。**
+
 For full documentation visit [mkdocs.org](https://mkdocs.org).
 
 ## Commands

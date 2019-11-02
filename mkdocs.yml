@@ -1,6 +1,11 @@
 site_name: 蓝牙 LED 矩阵控制器文档
 theme: readthedocs
 
+markdown_extensions:
+  - admonition
+
 nav:
     - 首页: index.md
+    - 硬件介绍: hardware.md
     - 蓝牙 BLE 协议: ble_protocol.md
+    - 应用层报文协议: packages.md
