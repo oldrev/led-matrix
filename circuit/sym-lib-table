@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name LedMatrix-Symbols)(type Legacy)(uri ${KIPRJMOD}/LedMatrix-Symbols.lib)(options "")(descr ""))
+)

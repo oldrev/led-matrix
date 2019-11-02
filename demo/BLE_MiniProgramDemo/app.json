@@ -1,0 +1,14 @@
+{
+    "pages": [
+        "pages/search/search",
+        "pages/device/device"
+    ],
+    "window": {
+        "backgroundTextStyle": "light",
+        "navigationBarBackgroundColor": "#f8f8f8",
+        "navigationBarTitleText": "蓝牙 LED 矩阵 Demo",
+        "navigationBarTextStyle": "black",
+        "backgroundColor": "#f8f8f8"
+    },
+    "sitemapLocation": "sitemap.json"
+}

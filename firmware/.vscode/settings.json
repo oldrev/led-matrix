@@ -1,0 +1,18 @@
+{
+    "files.associations": {
+        "all_devices.h": "c",
+        "stm32_hal.h": "c",
+        "util.h": "c",
+        "mq.h": "c",
+        "pid.h": "c",
+        "device.h": "c",
+        "string.h": "c",
+        "fixed_pid.h": "c",
+        "hardware_conf.h": "c",
+        "stm32f0xx_hal.h": "c",
+        "stm32f0xx_hal_conf.h": "c",
+        "gui.h": "c",
+        "devices.h": "c"
+    },
+    "workbench.colorCustomizations": {}
+}

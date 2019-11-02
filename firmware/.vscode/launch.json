@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "cortex-debug",
+            "request": "launch",
+            "servertype": "openocd",
+            "cwd": "${workspaceRoot}",
+            "executable": "./_build/Debug/bin/LEDMatrix-MK1",
+            "name": "Debug (OpenOCD)",
+            "device": "STM32F103C8T6",
+            "armToolchainPath": "${env:GCC_ARM_HOME}/bin",
+            "configFiles": [
+                "${env:OPENOCD_HOME}/share/openocd/scripts/interface/stlink.cfg",
+                "${env:OPENOCD_HOME}/share/openocd/scripts/target/stm32f1x.cfg"
+            ]
+        }
+    ]
+}
