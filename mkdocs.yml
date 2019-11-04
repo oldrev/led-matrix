@@ -1,12 +1,34 @@
 site_name: 蓝牙 LED 矩阵控制器文档
-theme: readthedocs
+theme:
+  name: 'material'
+  feature:
+    tabs: true
+  palette:
+    primary: 'blue'
+    accent: 'light blue'
+  static_templates:
+    - 404.html
 
-markdown_extensions:
-  - admonition
+docs_dir: docs
+
 
 nav:
-    - 首页: index.md
-    - 硬件介绍: hardware.md
-    - 蓝牙 BLE 协议: ble_protocol.md
-    - 应用层报文协议: packages.md
-    - 固件源码构建说明: fw_build.md
+  - 前言:
+    - 关于本文档: intro.md
+  - 硬件:
+    - 主板: board.md
+  - 固件:
+    - 构建说明: fw_build.md
+  - 通讯协议:
+    - 蓝牙 BLE 协议: protocol/ble_protocol.md
+    - 应用层报文协议: protocol/packages.md
+
+markdown_extensions:
+  - markdown.extensions.admonition
+  - markdown.extensions.codehilite
+  - markdown.extensions.def_list
+  - markdown.extensions.footnotes
+  - markdown.extensions.meta
+  - pymdownx.superfences
+  - toc:
+      permalink: true
