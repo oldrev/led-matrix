@@ -17,6 +17,7 @@ nav:
   - 硬件:
     - 主板: hw/board.md
     - 设计: hw/design.md
+    - 外壳: hw/casing.md
   - 固件:
     - 构建说明: fw/how_to_build.md
   - 通讯协议:
