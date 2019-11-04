@@ -13,8 +13,7 @@ docs_dir: docs
 
 
 nav:
-  - 前言:
-    - 关于本文档: intro.md
+  - 概述: index.md
   - 硬件:
     - 主板: hw/board.md
   - 固件:
