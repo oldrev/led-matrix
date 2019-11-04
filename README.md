@@ -1,5 +1,7 @@
 # 蓝牙 LED 矩阵控制器
 
+![PCB](docs/images/board_photo.jpg)
+
 详情文档推荐使用 mkdocs 构建并查看。
 
 构建文档需要先安装 Python3 及相关依赖：

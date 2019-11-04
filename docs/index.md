@@ -1,4 +1,8 @@
-# 文档简介
+
+
+![PCB](images/board_photo.jpg)
+
+# 关于此文档
 
 **本项目文档使用 mkdocs 生成。**
 
