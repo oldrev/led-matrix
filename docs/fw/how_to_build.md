@@ -1,7 +1,5 @@
 # 配置构建环境
 
-TODO
-
 ## 需求
 
 * STM32CubeMX：可到 ST.com 免费下载

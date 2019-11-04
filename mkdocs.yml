@@ -16,9 +16,9 @@ nav:
   - 前言:
     - 关于本文档: intro.md
   - 硬件:
-    - 主板: board.md
+    - 主板: hw/board.md
   - 固件:
-    - 构建说明: fw_build.md
+    - 构建说明: fw/how_to_build.md
   - 通讯协议:
     - 蓝牙 BLE 协议: protocol/ble_protocol.md
     - 应用层报文协议: protocol/packages.md
