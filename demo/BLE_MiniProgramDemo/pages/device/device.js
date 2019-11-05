@@ -1,4 +1,6 @@
-const app = getApp()
+import * as packages from '../../protocol/packages'
+
+const app = getApp();
 Page({
     data: {
         inputText: 'Hello World!',
@@ -18,6 +20,7 @@ Page({
     },
     SendFill_0: function() {
         var self = this;
+        /*
         //包需要使用小端序        
         var bytes = new Uint8Array([
             0x66, // Magic = 0x66 固定的报文 Magic
@@ -26,11 +29,15 @@ Page({
             0x09, 0x00,     // 报文长度 0x09
             0x00 //填充的颜色索引
         ]);
-        self.sendBytes(bytes.buffer);
+        */
+        var data = new Uint8Array([0x00]).buffer;
+        var packageBuffer = packages.packNotification(0x03, data);
+        self.sendBytes(packageBuffer);
     },
     SendFill_1: function () {
         var self = this;
-        //包需要使用小端序        
+        /*
+        //包需要使用小端序                
         var bytes = new Uint8Array([
             0x66, // Magic = 0x66 固定的报文 Magic
             0x00, 0x00, 0x00, 0x00, //ID = 0x00000001 报文 ID
@@ -38,11 +45,15 @@ Page({
             0x09, 0x00,     // 报文长度 0x09
             0x01 //填充的颜色索引
         ]);
-        self.sendBytes(bytes.buffer);
+        */
+        var data = new Uint8Array([0x01]).buffer;
+        var packageBuffer = packages.packNotification(0x03, data);
+        self.sendBytes(packageBuffer);
     },
     SendFill_2: function () {
         var self = this;
         //包需要使用小端序        
+        /*
         var bytes = new Uint8Array([
             0x66, // Magic = 0x66 固定的报文 Magic
             0x02, 0x00, 0x00, 0x00, //ID = 0x00000001 报文 ID
@@ -50,11 +61,15 @@ Page({
             0x09, 0x00,     // 报文长度 0x09
             0x02 //填充的颜色索引
         ]);
-        self.sendBytes(bytes.buffer);
+        */
+        var data = new Uint8Array([0x02]).buffer;
+        var packageBuffer = packages.packNotification(0x03, data);
+        self.sendBytes(packageBuffer);
     },    
     Send_SetPixelXY: function () {
         var self = this;
-        //包需要使用小端序        
+        /*
+        //包需要使用小端序                
         var bytes = new Uint8Array([
             0x66, // Magic = 0x66 固定的报文 Magic
             0x02, 0x00, 0x00, 0x00, //ID = 0x00000001 报文 ID
@@ -63,12 +78,16 @@ Page({
             0x02, 0x00, //X = 1
             0x00, 0x00, //Y = 0
             0x02 // 第二个颜色，红  
-        ]);
-        self.sendBytes(bytes.buffer);
+        ]);        
+        */
+        var data = new Uint8Array([0x02, 0x00, 0x00, 0x00, 0x02]).buffer;
+        var packageBuffer = packages.packNotification(0x05, data);
+        self.sendBytes(packageBuffer);        
     },        
     Send_SetPixel: function () {
         var self = this;        
         //包需要使用小端序        
+        /*
         var bytes = new Uint8Array([
             0x66, // Magic = 0x66 固定的报文 Magic
             0x02, 0x00, 0x00, 0x00, //ID = 0x00000001 报文 ID
@@ -77,7 +96,10 @@ Page({
             self.data.currentIndex, 0x00, //index = self.data.currentIndex
             0x03 // 第三个颜色，绿
         ]);
-        self.sendBytes(bytes.buffer);
+        */
+        var data = new Uint8Array([self.data.currentIndex, 0x00, 0x03]).buffer;
+        var packageBuffer = packages.packNotification(0x04, data);
+        self.sendBytes(packageBuffer);
         self.data.currentIndex += 1;
         if(self.data.currentIndex >= 10) {
             self.data.currentIndex = 0;

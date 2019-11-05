@@ -33,6 +33,6 @@ https://developers.weixin.qq.com/miniprogram/dev/framework/device/bluetooth.html
 
 演示小程序的服务和特征值都是默认第一个，刚好符合本系统。实际的项目中，需要按照上面的服务/特征值参数过滤并检查广播的蓝牙模块。
 
-实际项目的小程序 JavaScript 程序报文打包解包推荐使用 [DataStream.js](https://www.npmjs.com/package/datastream-js) 库。
+实际项目的小程序 JavaScript 程序报文打包解包参考演示程序中修改过的 `struct-fu` 库。
 
 **注意报文使用小端序（LITTLE_ENDIAN）。**
