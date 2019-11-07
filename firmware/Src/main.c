@@ -85,6 +85,7 @@ static int MsgProc_Display_Fill(const Comm_RemoteHeader* header, const void* arg
 static int MsgProc_Display_SetPixel(const Comm_RemoteHeader* header, const void* args);
 static int MsgProc_Display_SetPixelXY(const Comm_RemoteHeader* header, const void* args);
 static int MsgProc_Config_DisplaySettings(const Comm_RemoteHeader* header, const void* args);
+static int MsgProc_Config_Restore(const Comm_RemoteHeader* header, const void* args);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -166,6 +167,14 @@ static int MsgProc_Config_DisplaySettings(const Comm_RemoteHeader* header, const
     return 0;
 }
 
+
+static int MsgProc_Config_Restore(const Comm_RemoteHeader* header, const void* args) {
+    // 恢复默认设置
+    Settings_Restore();
+    // 执行重启
+    HAL_NVIC_SystemReset();
+    return 0;
+}
 /* USER CODE END 0 */
 
 /**
@@ -564,6 +573,7 @@ void TaskProc_Default(void const * argument)
                 case MESSAGE_DISPLAY_SET_PIXEL: MsgProc_Display_SetPixel(&header, arguments); break;
                 case MESSAGE_DISPLAY_SET_PIXELXY: MsgProc_Display_SetPixelXY(&header, arguments); break;
                 case MESSAGE_CONFIG_DISPLAY: MsgProc_Config_DisplaySettings(&header, arguments); break;
+                case MESSAGE_CONFIG_RESTORE: MsgProc_Config_Restore(&header, arguments); break;
                 default: break;
             }
         }
