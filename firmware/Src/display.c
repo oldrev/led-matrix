@@ -76,7 +76,5 @@ int Display_Fill(Display* display, uint8_t colorIndex)
 {
     uint16_t pixelCount = display->Settings->XMax * display->Settings->YMax;
     memset(display->Pixels, colorIndex, pixelCount);
-    const __IO Display_Color* color = &display->Settings->Palette[colorIndex];
-    WS2812_Fill(&display->Device, color->Red, color->Green, color->Blue);
     return 0;
 }
