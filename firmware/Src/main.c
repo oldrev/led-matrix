@@ -63,7 +63,6 @@ osThreadId displayTaskHandle;
 osMessageQId g_cmdBusHandle;
 /* USER CODE BEGIN PV */
 
-AppSettings g_appSettings;
 Display g_display[1];
 
 /* USER CODE END PV */
@@ -161,19 +160,24 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+    
+    // 初始化指示灯
     Indicator_Init();
     Indicator_TurnOn(0);
 
-    // 恢复默认设置
-    memcpy(&g_appSettings, &APP_SETTINGS_DEFAULT, sizeof(g_appSettings));
-    
+    //初始化设置
+    Settings_Init();
+    if(Settings_IsFirstBoot()) {
+        Settings_Restore();
+    }
+
     //初始化蓝牙模�????????
     if (JDY08_Init(&huart2, &hdma_usart2_rx) != 0) {
         Error_Handler();
     }
 
     // 初始化显示模�????????
-    if (Display_Init(&g_display[0], &g_appSettings.DisplaySettings, &hspi1) != 0) {
+    if (Display_Init(&g_display[0], &Settings_Get()->DisplaySettings, &hspi1) != 0) {
         Error_Handler();
     }
 

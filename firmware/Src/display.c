@@ -11,7 +11,7 @@
 /**
  * 初始化显示端口
  **/
-int Display_Init(Display* display, DisplaySettings* settings, SPI_HandleTypeDef* spi)
+int Display_Init(Display* display, const __IO DisplaySettings* settings, SPI_HandleTypeDef* spi)
 {
     memset(display, 0, sizeof(Display));
     display->Settings = settings;
@@ -43,7 +43,7 @@ int Display_Update(Display* display)
         for (uint16_t x = 0; x < display->Settings->XMax; x++) {
             // 单数行的像素是相反的
             uint16_t pixelIndex = y * display->Settings->XMax + (y % 2 == 0 ? x : (display->Settings->XMax - 1 - x));
-            const Display_Color* color = &display->Settings->Palette[display->Pixels[pixelIndex]];
+            const __IO Display_Color* color = &display->Settings->Palette[display->Pixels[pixelIndex]];
             WS2812_SetPixel(&display->Device, ledIndex, color->Red, color->Green, color->Blue);
             ledIndex++;
 
@@ -76,7 +76,7 @@ int Display_Fill(Display* display, uint8_t colorIndex)
 {
     uint16_t pixelCount = display->Settings->XMax * display->Settings->YMax;
     memset(display->Pixels, colorIndex, pixelCount);
-    const Display_Color* color = &display->Settings->Palette[colorIndex];
+    const __IO Display_Color* color = &display->Settings->Palette[colorIndex];
     WS2812_Fill(&display->Device, color->Red, color->Green, color->Blue);
     return 0;
 }

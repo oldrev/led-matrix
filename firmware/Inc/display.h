@@ -20,13 +20,13 @@ typedef struct {
 } DisplaySettings;
 
 typedef struct {
-    uint8_t*            Pixels;
-    DisplaySettings*    Settings;
-    WS2812_Device       Device;
+    uint8_t*                  Pixels;
+    const __IO DisplaySettings*    Settings;
+    WS2812_Device             Device;
 } Display;
 
 
-int Display_Init(Display* display, DisplaySettings* settings, SPI_HandleTypeDef* spi);
+int Display_Init(Display* display, const __IO DisplaySettings* settings, SPI_HandleTypeDef* spi);
 
 int Display_Update(Display* display);
 
