@@ -4,8 +4,8 @@ theme:
   feature:
     tabs: true
   palette:
-    primary: 'blue'
-    accent: 'light blue'
+    primary: 'dark blue'
+    accent: 'blue'
   static_templates:
     - 404.html
 
