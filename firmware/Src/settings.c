@@ -28,8 +28,8 @@ const AppSettings APP_SETTINGS_DEFAULT = { .DisplaySettings = { .LedCount = 500,
 #define FLASH_MEMORY_SIZE  (1024 * 64)
 
 
-//保存设置的地址为最后两页
-#define	SETTINGS_FLASH_ADDRESS  (0x08000000 + (FLASH_MEMORY_SIZE - (FLASH_PAGE_SIZE * 2)))
+//保存设置的地址为最后1页
+#define	SETTINGS_FLASH_ADDRESS  (0x08000000 + (FLASH_MEMORY_SIZE - (FLASH_PAGE_SIZE)))
 
 const __IO AppSettings* SETTINGS_INVARIABLE = (const __IO AppSettings*)(SETTINGS_FLASH_ADDRESS);
 

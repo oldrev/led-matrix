@@ -3,7 +3,7 @@
 enum MESSAGES {
     // 系统类的消息
     MESSAGE_SYSTEM_NOP = 0x0,
-    MESSAGE_SYSTEM_ECHO = 0x1,
+    MESSAGE_SYSTEM_RESET = 0x01,
     MESSAGE_SYSTEM_HELLO = 0x02,
 
     // 业务类的消息
@@ -12,8 +12,10 @@ enum MESSAGES {
     MESSAGE_DISPLAY_SET_PIXELXY = 0x05,
 
     // 设置类的消息
-    MESSAGE_CONFIG_DISPLAY = 0xA1,
+    MESSAGE_CONFIG_DISPLAY_GET = 0xA0,  // 获取显示设置参数
+    MESSAGE_CONFIG_DISPLAY = 0xA1,  // 修改显示设置参数
     MESSAGE_CONFIG_NAME = 0xA2,
     MESSAGE_CONFIG_PASSWORD = 0xA3,
+    MESSAGE_CONFIG_RESTORE = 0xFF, // 恢复出厂设置
 };
 

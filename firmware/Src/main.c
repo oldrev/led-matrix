@@ -79,15 +79,23 @@ void TaskProc_Default(void const * argument);
 void TaskProc_Display(void const * argument);
 
 /* USER CODE BEGIN PFP */
-static int MsgProc_System_Echo(const Comm_RemoteHeader* header, const void* args);
+static int MsgProc_System_Reset(const Comm_RemoteHeader* header, const void* args);
+static int MsgProc_System_Hello(const Comm_RemoteHeader* header, const void* args);
 static int MsgProc_Display_Fill(const Comm_RemoteHeader* header, const void* args);
 static int MsgProc_Display_SetPixel(const Comm_RemoteHeader* header, const void* args);
 static int MsgProc_Display_SetPixelXY(const Comm_RemoteHeader* header, const void* args);
+static int MsgProc_Config_DisplaySettings(const Comm_RemoteHeader* header, const void* args);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-static int MsgProc_System_Echo(const Comm_RemoteHeader* header, const void* args) {
+static int MsgProc_System_Reset(const Comm_RemoteHeader* header, const void* args) {
+    HAL_NVIC_SystemReset();
+    return 0;
+}
+
+
+static int MsgProc_System_Hello(const Comm_RemoteHeader* header, const void* args) {
     if(Comm_ReplyPackage(header->ID, header->Type, args, header->Size - COMM_REMOTE_PACKAGE_HEADER_SIZE) != 0) {
         return -1;
     }
@@ -102,6 +110,7 @@ static int MsgProc_Display_Fill(const Comm_RemoteHeader* header, const void* arg
     return 0;
 }
 
+
 static int MsgProc_Display_SetPixel(const Comm_RemoteHeader* header, const void* args) {
     const uint8_t* buf = (const uint8_t*)args;
     const uint16_t* pixelIndex = (const uint16_t*)buf;
@@ -112,6 +121,7 @@ static int MsgProc_Display_SetPixel(const Comm_RemoteHeader* header, const void*
     return 0;
 }
 
+
 static int MsgProc_Display_SetPixelXY(const Comm_RemoteHeader* header, const void* args) {
     const uint8_t* buf = (const uint8_t*)args;
     const uint16_t* x = (const uint16_t*)buf;
@@ -120,6 +130,39 @@ static int MsgProc_Display_SetPixelXY(const Comm_RemoteHeader* header, const voi
     if(Display_SetPixelXY(&g_display[0], *x, *y, *colorIndex) != 0) {
         return -1;
     }
+    return 0;
+}
+
+
+static int MsgProc_Config_DisplaySettings(const Comm_RemoteHeader* header, const void* args) {
+    const uint8_t* buf = (const uint8_t*)args;
+    AppSettings settings;
+    // 从 Flash 取出现有设置到临时变量
+    memcpy(&settings, (const void*)Settings_Get(), sizeof(AppSettings));
+    // 执行显示设置修改
+    settings.DisplaySettings.LedCount = *((const uint16_t*)buf);
+    settings.DisplaySettings.XMax = (*(const uint16_t*)(buf + 2));
+    settings.DisplaySettings.YMax = (*(const uint16_t*)(buf + 4));
+    settings.DisplaySettings.XSkip = (*(const uint16_t*)(buf + 6));
+    settings.DisplaySettings.YSkip = (*(const uint16_t*)(buf + 8));
+    // 设置调色板
+    uint16_t bytesIndex = 0;
+    const uint8_t* paletteBytes = buf + 10;
+    for(uint16_t i = 0; i < PALETTE_SIZE; i ++) {
+        settings.DisplaySettings.Palette[i].Red = paletteBytes[bytesIndex];
+        settings.DisplaySettings.Palette[i].Green = paletteBytes[bytesIndex + 1];
+        settings.DisplaySettings.Palette[i].Blue = paletteBytes[bytesIndex + 2];
+        bytesIndex += 3;
+    }
+    // 保存设置
+    Settings_Save(&settings);
+    // 返回响应
+    uint8_t responseArgs = 0;
+    if(Comm_ReplyPackage(header->ID, header->Type, &responseArgs, 1) != 0) {
+        return -1;
+    }
+    // 执行重启
+    HAL_NVIC_SystemReset();
     return 0;
 }
 
@@ -516,10 +559,11 @@ void TaskProc_Default(void const * argument)
             Comm_ParsePackageHeader(event.value.p, &header);
             const uint8_t* arguments = ((const uint8_t*)event.value.p) + COMM_REMOTE_PACKAGE_HEADER_SIZE;
             switch (header.Type) {
-                case MESSAGE_SYSTEM_ECHO: MsgProc_System_Echo(&header, arguments); break;
+                case MESSAGE_SYSTEM_RESET: MsgProc_System_Reset(&header, arguments); break;
                 case MESSAGE_DISPLAY_FILL: MsgProc_Display_Fill(&header, arguments); break;
                 case MESSAGE_DISPLAY_SET_PIXEL: MsgProc_Display_SetPixel(&header, arguments); break;
                 case MESSAGE_DISPLAY_SET_PIXELXY: MsgProc_Display_SetPixelXY(&header, arguments); break;
+                case MESSAGE_CONFIG_DISPLAY: MsgProc_Config_DisplaySettings(&header, arguments); break;
                 default: break;
             }
         }
