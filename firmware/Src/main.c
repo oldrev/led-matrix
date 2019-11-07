@@ -587,7 +587,7 @@ void TaskProc_Display(void const * argument)
     for (;;) {
         osThreadYield();
         // 刷新显示
-        if (HAL_GetTick() - displayTimer >= 20) {
+        if (HAL_GetTick() - displayTimer >= 40) { // 最多 40ms 刷新一次
             Display_Update(&g_display[0]);
             displayTimer = HAL_GetTick();
         }
