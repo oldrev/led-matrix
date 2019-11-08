@@ -7,7 +7,7 @@ typedef struct {
     uint8_t Red;
     uint8_t Green;
     uint8_t Blue;
-} Display_Color;
+} __attribute__((packed)) Display_Color;
 
 
 typedef struct {

@@ -22,13 +22,14 @@ const uint8_t RESET_BUFFER[RESET_BUFFER_SIZE] = { 0 };
 
 void WS2812_Init(WS2812_Device* ws2812)
 {
-    WS2812_FillBlack(ws2812);
 
     while (HAL_SPI_GetState(ws2812->Spi) != HAL_SPI_STATE_READY) {
     }
     WS2812_Reset(ws2812);
+
     while (HAL_SPI_GetState(ws2812->Spi) != HAL_SPI_STATE_READY) {
     }
+    WS2812_FillBlack(ws2812);
     WS2812_Send(ws2812);
     while (HAL_SPI_GetState(ws2812->Spi) != HAL_SPI_STATE_READY) {
     }

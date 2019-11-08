@@ -4,7 +4,7 @@ typedef struct {
     uint8_t Red[3];
     uint8_t Green[3];
     uint8_t Blue[3];
-} WS2812_Pixel;
+} __attribute__((packed)) WS2812_Pixel;
 
 typedef struct {
     SPI_HandleTypeDef* Spi;

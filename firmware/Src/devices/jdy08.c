@@ -223,7 +223,7 @@ int JDY08_BeginDataRX()
     return 0;
 }
 
-int JDY08_Transmit(const void* buf, uint16_t bufSize) 
+int JDY08_Transmit(const void* buf, uint16_t bufSize)
 {
     if (HAL_UART_Transmit_DMA(g_device.Uart, (uint8_t*)buf, bufSize) != HAL_OK) {
         return -1;
@@ -247,8 +247,6 @@ int JDY08_OnReceived()
         if (g_device.Mode == JDY08_AT_MODE) { // AT 模式缓冲区留给后面的处理
             g_device.IsReceived = 1; // 接受完成标志位置1
         } else { // 透传模式把收到的包存入消息队列
-            //osMessagePut(g_device.RXQueue, (uint32_t)g_device.RXBuffer, 0); // Send Message
-            //JDY08_ReceiveFrame();
             Comm_ReceiveFrame(g_device.RXBuffer, g_device.RXSize);
             g_device.Mode = JDY08_TRANS_MODE;
             BeginRX(); // 重新启动 DMA 接收

@@ -6,18 +6,14 @@
 #define COMM_REMOTE_PACKAGE_HEADER_SIZE     8
 #define COMM_PACKAGE_CAPACITY       512
 #define COMM_PACKAGE_BODY_CAPACITY  (COMM_PACKAGE_CAPACITY - COMM_REMOTE_PACKAGE_HEADER_SIZE)     
-
-typedef struct {
-    uint16_t Size;
-    uint8_t MsgPack[COMM_PACKAGE_CAPACITY];
-} Comm_CmdMsg;
+#define COMM_FRAME_INTERVAL_MAX     500     // 两帧之间不能超过 500ms 的间隔
 
 typedef struct {
     uint8_t  Magic;
     uint32_t ID;
     uint8_t Type;
     uint16_t Size;
-} Comm_RemoteHeader;
+} __attribute__((packed)) Comm_RemoteHeader;
 
 typedef struct {
     uint8_t             Package[COMM_PACKAGE_BODY_CAPACITY];
@@ -32,6 +28,15 @@ typedef struct {
     Comm_PackageBuffer Buffer;
     uint8_t            TXBuffer[COMM_PACKAGE_CAPACITY];
 } Comm;
+
+
+typedef struct {
+    uint16_t        X;
+    uint16_t        Y;
+    uint8_t         ColorIndex;
+} __attribute__((packed)) Comm_Display_SetPixelXY_Arguments;
+
+
 
 int Comm_Init(osMessageQId queue);
 
