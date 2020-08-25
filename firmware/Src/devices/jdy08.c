@@ -56,6 +56,11 @@ int JDY08_Init(UART_HandleTypeDef* uart, DMA_HandleTypeDef* dma)
         return -1;
     }
 
+    if (JDY08_EnsureBroadcastingName(&resetRequired) != 0) {
+        return -1;
+    }
+
+
     if (resetRequired) {
         JDY08_Reset();
         HAL_Delay(1200);
