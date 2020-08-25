@@ -144,7 +144,7 @@ static int MsgProc_Config_DisplaySettings(const Comm_RemoteHeader* header, const
 {
     const uint8_t* buf = (const uint8_t*)args;
     AppSettings settings;
-    // �? Flash 取出现有设置到临时变�?
+    // �? Flash 取出现有设置到临时变�?
     memcpy(&settings, (const void*)Settings_Get(), sizeof(AppSettings));
     // 执行显示设置修改
     settings.DisplaySettings.LedCount = *((const uint16_t*)buf);
@@ -152,7 +152,7 @@ static int MsgProc_Config_DisplaySettings(const Comm_RemoteHeader* header, const
     settings.DisplaySettings.YMax = (*(const uint16_t*)(buf + 4));
     settings.DisplaySettings.XSkip = (*(const uint16_t*)(buf + 6));
     settings.DisplaySettings.YSkip = (*(const uint16_t*)(buf + 8));
-    // 设置调色�?
+    // 设置调色�?
     uint16_t bytesIndex = 0;
     const uint8_t* paletteBytes = buf + 10;
     for (uint16_t i = 0; i < PALETTE_SIZE; i++) {
@@ -223,18 +223,18 @@ int main(void)
     Indicator_Init();
     Indicator_TurnOn(0);
 
-    //初始化设�?
+    //初始化设�?
     Settings_Init();
     if (Settings_IsFirstBoot()) {
         Settings_Restore();
     }
 
-    // 初始化显示模�?????????
+    // 初始化显示模�?????????
     if (Display_Init(&g_display[0], &Settings_Get()->DisplaySettings, &hspi1) != 0) {
         Error_Handler();
     }
 
-    //初始化蓝牙模�?????????
+    //初始化蓝牙模�?????????
     if (JDY08_Init(&huart2, &hdma_usart2_rx) != 0) {
         Error_Handler();
     }
@@ -569,11 +569,14 @@ void TaskProc_Default(void const * argument)
         osThreadYield();
         event = osMessageGet(g_cmdBusHandle, osWaitForever); // wait for message
         if (event.status == osEventMessage) {
-            // 解析�???
+            // 解析�???
             Comm_RemoteHeader header = { 0 };
             Comm_ParsePackageHeader(event.value.p, &header);
             const uint8_t* arguments = ((const uint8_t*)event.value.p) + COMM_REMOTE_PACKAGE_HEADER_SIZE;
             switch (header.Type) {
+            case MESSAGE_SYSTEM_HELLO:
+                MsgProc_System_Hello(&header, arguments);
+                break;
             case MESSAGE_SYSTEM_RESET:
                 MsgProc_System_Reset(&header, arguments);
                 break;
@@ -616,12 +619,12 @@ void TaskProc_Display(void const * argument)
     for (;;) {
         osThreadYield();
         // 刷新显示
-        if (HAL_GetTick() - displayTimer >= 40) { // �?�? 40ms 刷新�?�?
+        if (HAL_GetTick() - displayTimer >= 40) { // �?�? 40ms 刷新�?�?
             Display_Update(&g_display[0]);
             displayTimer = HAL_GetTick();
         }
 
-        // 已连接则指示灯每 300ms 闪烁�??????????次，未连接则 1500ms 闪烁�??????????�??????????
+        // 已连接则指示灯每 300ms 闪烁�??????????次，未连接则 1500ms 闪烁�??????????�??????????
         uint32_t indicatorInterval = JDY08_IsConnected() ? 300 : 1500;
         if (HAL_GetTick() - indicatorTimer >= indicatorInterval) {
             Indicator_TurnOnInPeriod(0, 50);

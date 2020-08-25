@@ -30,6 +30,7 @@ int JDY08_EnsureBroadcastingName(int* resetRequired);
 int JDY08_EnsurePower(int* resetRequired);
 int JDY08_EnsureWeixinEnabled(int* resetRequired);
 int JDY08_EnsureClass(int* resetRequired);
+int JDY08_EnsureAdvertisement(int* resetRequired);
 
 int JDY08_Reset();
 int JDY08_IsConnected();

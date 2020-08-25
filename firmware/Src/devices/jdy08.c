@@ -14,6 +14,7 @@ static int BeginRX();
 #define DEFAULT_POWER "+POWR:0"
 #define DEFAULT_WXEN "+WXEN:0"
 #define DEFAULT_CLSS "+CLSS:A3"
+#define DEFAULT_ADVEN "+ADVEN:1"
 
 int JDY08_Init(UART_HandleTypeDef* uart, DMA_HandleTypeDef* dma)
 {
@@ -212,7 +213,37 @@ int JDY08_EnsureClass(int* resetRequired)
     return 0;
 }
 
-int JDY08_IsConnected() { return (int)HAL_GPIO_ReadPin(BLE_STAT_GPIO_Port, BLE_STAT_Pin); }
+/** \brief 确认打开了广播
+ * 
+ * 
+ */
+int JDY08_EnsureAdvertisement(int* resetRequired) {
+    if (JDY08_SendAT("AT+ADVEN") != HAL_OK) {
+        return -1;
+    }
+
+    if (strncmp(DEFAULT_ADVEN, (char*)g_device.RXBuffer, strlen(DEFAULT_ADVEN)) != 0) {
+        //不符合，则修改
+        if (JDY08_SendATAndWaitOK("AT+ADVEN1") != HAL_OK) {
+            return -1;
+        }
+        // 修改成功，重启模块
+        if (!*resetRequired) {
+            *resetRequired = 1;
+        }
+    }
+    return 0;
+}
+
+/** \brief 是否已经连接
+ * 
+ */
+int JDY08_IsConnected()
+{
+    // 返回
+    return (int)HAL_GPIO_ReadPin(BLE_STAT_GPIO_Port, BLE_STAT_Pin);
+}
+
 
 int JDY08_BeginDataRX()
 {
