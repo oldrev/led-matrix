@@ -11,7 +11,7 @@ static void ClearRX();
 static int BeginRX();
 static int InitMacAddress();
 
-#define DEFAULT_BROADCASTING_NAME "MiniWall"
+#define DEFAULT_BROADCASTING_NAME "磕 MoveBoard"
 #define DEFAULT_POWER "+POWR:0"
 #define DEFAULT_WXEN "+WXEN:0"
 #define DEFAULT_CLSS "+CLSS:A3"
