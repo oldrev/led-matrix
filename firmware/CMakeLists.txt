@@ -17,10 +17,10 @@ set(STM32HAL_COMPONENTS adc cortex crc dac dma eth flash gpio hcd i2c
                             i2s irda iwdg nand nor pcd pwr rcc rtc sd
                             spi sram tim uart usart wwdg)
 include(ClangFormat REQUIRED)
-find_package(CMSIS REQUIRED)
 find_package(FreeRTOS REQUIRED)
 find_package(STM32HAL COMPONENTS ${STM32HAL_COMPONENTS} REQUIRED)
-find_package(STM32LL COMPONENTS REQUIRED)
+#find_package(STM32LL)
+find_package(CMSIS REQUIRED)
 
 if(NOT CMAKE_BUILD_TYPE)
     set (CMAKE_BUILD_TYPE Release)
@@ -53,7 +53,7 @@ include_directories(
     ${STM32HAL_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMSIS_INCLUDE_DIRS}
-    ${STM32LL_INCLUDE_DIR}
+    #${STM32LL_INCLUDE_DIR}
     "Inc"
     "Lib/msgpack"
     "Lib/nanopb"
@@ -81,13 +81,13 @@ set(PROJECT_SOURCES
     ${STM32HAL_SOURCES}
     ${CMSIS_SOURCES}
     ${FreeRTOS_SOURCES}
-    ${STM32LL_SOURCES}
+    #${STM32LL_SOURCES}
     ${LIBS_C_SOURCES}
     ${APP_C_SOURCES}
 )
 
-set(EXECUTABLE_OUTPUT_PATH _build/${CMAKE_BUILD_TYPE}/bin)
-set(LIBRARY_OUTPUT_PATH _build/${CMAKE_BUILD_TYPE}/lib)
+set(EXECUTABLE_OUTPUT_PATH build/${CMAKE_BUILD_TYPE}/bin)
+set(LIBRARY_OUTPUT_PATH build/${CMAKE_BUILD_TYPE}/lib)
 
 add_executable(${CMAKE_PROJECT_NAME} ${PROJECT_SOURCES})
 

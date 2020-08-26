@@ -2,6 +2,7 @@
 #include <cmsis_os.h>
 
 #include "comm.h"
+#include "utils.h"
 #include "devices/devices.h"
 #include "devices/jdy08.h"
 
@@ -65,6 +66,10 @@ int JDY08_Init(UART_HandleTypeDef* uart, DMA_HandleTypeDef* dma)
     if (resetRequired) {
         JDY08_Reset();
         HAL_Delay(1200);
+    }
+
+    if (InitMacAddress() != 0) {
+        return -1;
     }
 
     // 退出 AT 模式
@@ -253,7 +258,11 @@ int JDY08_IsConnected()
 /** \brief 获取 MAC 地址
  * 
  */
-const char* JDY08_GetMac() { return g_device.Mac; }
+const uint8_t* JDY08_GetMac()
+{
+    // 直接返回
+    return g_device.Mac;
+}
 
 int JDY08_BeginDataRX()
 {
@@ -329,7 +338,7 @@ static int InitMacAddress() {
 
     // 获取到了合适的 MAC 地址，设置到设备信息里
     memset(g_device.Mac, 0, sizeof(g_device.Mac));
-    strncpy(g_device.Mac, (const char*)(g_device.RXBuffer + 5), 12);
+    hex2bin((const char*)(&g_device.RXBuffer[5]), 12, g_device.Mac);
 
     return 0;
 }

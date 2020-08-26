@@ -2,30 +2,30 @@ SET(STM32LL_HEADER_ONLY_COMPONENTS	bus cortex iwdg system wwdg dmamux)
 
 IF(STM32_FAMILY STREQUAL "F0")
     SET(LL_COMPONENTS	adc bus comp cortex crc crs dac dma exti gpio i2c
-						i2s iwdg pwr rcc rtc spi system tim usart utils wwdg)
+						iwdg pwr rcc rtc spi system tim usart utils wwdg)
 
     SET(LL_REQUIRED_COMPONENTS bus cortex pwr rcc system utils)
 
     SET(LL_PREFIX stm32f0xx_)
 
 ELSEIF(STM32_FAMILY STREQUAL "F1")
-    SET(LL_COMPONENTS	adc bus cortex crc dac dma exti gpio i2c i2s
-						iwdg pwr rcc rtc spi system tim usart usb utils wwdg)
+    SET(LL_COMPONENTS	adc bus cortex crc dac dma exti fsmc gpio i2c
+						iwdg pwr rcc rtc sdmmc spi system tim usart usb utils wwdg)
 
     SET(LL_REQUIRED_COMPONENTS bus cortex pwr rcc system utils)
 
     SET(LL_PREFIX stm32f1xx_)
 
 ELSEIF(STM32_FAMILY STREQUAL "F2")
-    SET(LL_COMPONENTS	adc bus cortex crc dac dma exti gpio i2c i2s iwdg pwr 
-						rcc rng rtc spi system tim usart usb utils wwdg)
+    SET(LL_COMPONENTS	adc bus cortex crc dac dma exti fsmc gpio i2c iwdg pwr
+						rcc rng rtc sdmmc spi system tim usart usb utils wwdg)
 
     SET(LL_REQUIRED_COMPONENTS bus cortex pwr rcc system utils)
 
     SET(LL_PREFIX stm32f2xx_)
 
 ELSEIF(STM32_FAMILY STREQUAL "F3")
-    SET(LL_COMPONENTS	adc bus comp cortex crc dac dma exti gpio hrtim i2c i2s
+    SET(LL_COMPONENTS	adc bus comp cortex crc dac dma exti fmc gpio hrtim i2c
 						iwdg opamp pwr rcc rtc spi system tim usart utils wwdg)
 
     SET(LL_REQUIRED_COMPONENTS bus cortex pwr rcc system utils)
@@ -33,33 +33,45 @@ ELSEIF(STM32_FAMILY STREQUAL "F3")
     SET(LL_PREFIX stm32f3xx_)
 
 ELSEIF(STM32_FAMILY STREQUAL "F4")
-    SET(LL_COMPONENTS	adc bus cortex crc dac dma2d dma exti gpio i2c i2s iwdg
-						lptim pwr rcc rng rtc spi system tim usart usb utils wwdg)
+    SET(LL_COMPONENTS	adc bus cortex crc dac dma2d dma exti fmc fsmc gpio i2c iwdg
+						lptim pwr rcc rng rtc sdmmc spi system tim usart usb utils wwdg)
 
     SET(LL_REQUIRED_COMPONENTS bus cortex pwr rcc system utils)
 
     SET(LL_PREFIX stm32f4xx_)
 
 ELSEIF(STM32_FAMILY STREQUAL "F7")
-    SET(LL_COMPONENTS	adc bus cortex crc dac dma2d dma exti gpio i2c i2s iwdg
-						lptim pwr rcc rng rtc spi system tim usart usb utils wwdg)
+    SET(LL_COMPONENTS	adc bus cortex crc dac dma2d dma exti fmc gpio i2c iwdg
+						lptim pwr rcc rng rtc sdmmc spi system tim usart usb utils wwdg)
 
     SET(LL_REQUIRED_COMPONENTS bus cortex pwr rcc system utils)
 
     SET(LL_PREFIX stm32f7xx_)
+	
+ELSEIF(STM32_FAMILY STREQUAL "H7")
+    SET(LL_COMPONENTS   delayblock fmc sdmmc usb)
+
+    SET(LL_PREFIX stm32h7xx_)
 
 ELSEIF(STM32_FAMILY STREQUAL "L0")
-    SET(LL_COMPONENTS	adc bus comp cortex crc crs dac dma exti gpio i2c i2s
-						iwdg lptim lpuart pwr rcc rng rtc spi system tim usart
+    SET(LL_COMPONENTS	adc bus comp cortex crc crs dac dma exti gpio i2c
+						iwdg lptim lpuart pwr rcc rng rtc spi system tim usart usb
 						utils wwdg)
 
     SET(LL_REQUIRED_COMPONENTS bus cortex pwr rcc system utils)
 
     SET(LL_PREFIX stm32l0xx_)
 
+ELSEIF(STM32_FAMILY STREQUAL "L1")
+    SET(LL_COMPONENTS	adc bus comp cortex crc dac dma exti fsmc gpio i2c iwdg opamp
+                        pwr rcc rtc sdmmc spi tim usart utils)
+    SET(LL_REQUIRED_COMPONENTS pwr rcc utils)
+
+    SET(LL_PREFIX stm32l1xx_)
+
 ELSEIF(STM32_FAMILY STREQUAL "L4")
     SET(LL_COMPONENTS	adc bus comp cortex crc crs dac dma2d dmamux dma exti 
-						gpio i2c iwdg lptim lpuart opamp pwr rcc rng rtc spi 
+						fmc gpio i2c iwdg lptim lpuart opamp pwr rcc rng rtc sdmmc spi
 						system tim usart usb utils wwdg)
 
     SET(LL_REQUIRED_COMPONENTS bus cortex pwr rcc system utils)
@@ -68,7 +80,9 @@ ELSEIF(STM32_FAMILY STREQUAL "L4")
 
 ENDIF()
 
-ADD_DEFINITIONS(-DUSE_FULL_LL_DRIVER)
+IF(NOT NO_STM32LL_FULL_DRIVER)
+    ADD_DEFINITIONS(-DUSE_FULL_LL_DRIVER)
+ENDIF()
 
 FOREACH(cmp ${LL_REQUIRED_COMPONENTS})
 	LIST(FIND STM32LL_FIND_COMPONENTS ${cmp} STM32LL_FOUND_INDEX)
@@ -111,7 +125,7 @@ FOREACH(LL_SRC ${LL_SRCS})
 	)
 	LIST(APPEND STM32LL_SOURCES ${LL_${LL_SRC_CLEAN}_FILE})
 ENDFOREACH()
-
+    
 INCLUDE(FindPackageHandleStandardArgs)
 
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(STM32LL DEFAULT_MSG STM32LL_INCLUDE_DIR STM32LL_SOURCES)

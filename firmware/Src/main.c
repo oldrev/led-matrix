@@ -98,7 +98,10 @@ static int MsgProc_System_Reset(const Comm_RemoteHeader* header, const void* arg
 
 static int MsgProc_System_Hello(const Comm_RemoteHeader* header, const void* args)
 {
-    if (Comm_ReplyPackage(header->ID, header->Type, args, header->Size - COMM_REMOTE_PACKAGE_HEADER_SIZE) != 0) {
+    uint8_t responseBody[6];
+    memcpy(responseBody, JDY08_GetMac(), 6);
+
+    if (Comm_ReplyPackage(header->ID, header->Type, responseBody, 6) != 0) {
         return -1;
     }
     return 0;
@@ -625,9 +628,9 @@ void TaskProc_Display(void const * argument)
         }
 
         // 已连接则指示灯每 300ms 闪烁�??????????次，未连接则 1500ms 闪烁�??????????�??????????
-        uint32_t indicatorInterval = JDY08_IsConnected() ? 300 : 1500;
+        uint32_t indicatorInterval = JDY08_IsConnected() ? 400 : 1000;
         if (HAL_GetTick() - indicatorTimer >= indicatorInterval) {
-            Indicator_TurnOnInPeriod(0, 50);
+            Indicator_TurnOnInPeriod(0, 200);
             indicatorTimer = HAL_GetTick();
         }
 

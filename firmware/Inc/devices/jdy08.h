@@ -10,7 +10,7 @@ typedef struct {
     volatile uint16_t   RXSize;
     volatile uint8_t    IsReceived;
     volatile uint8_t    Mode;
-    char                Mac[13];
+    uint8_t             Mac[6];
 } JDY08_Device;
 
 enum {
@@ -33,7 +33,7 @@ int JDY08_EnsureWeixinEnabled(int* resetRequired);
 int JDY08_EnsureClass(int* resetRequired);
 int JDY08_EnsureAdvertisement(int* resetRequired);
 
-const char* JDY08_GetMac();
+const uint8_t* JDY08_GetMac();
 
 int JDY08_Reset();
 int JDY08_IsConnected();
