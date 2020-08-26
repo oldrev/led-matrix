@@ -9,6 +9,7 @@ static JDY08_Device g_device;
 
 static void ClearRX();
 static int BeginRX();
+static int InitMacAddress();
 
 #define DEFAULT_BROADCASTING_NAME "MiniWall"
 #define DEFAULT_POWER "+POWR:0"
@@ -249,6 +250,10 @@ int JDY08_IsConnected()
     return (int)HAL_GPIO_ReadPin(BLE_STAT_GPIO_Port, BLE_STAT_Pin);
 }
 
+/** \brief 获取 MAC 地址
+ * 
+ */
+const char* JDY08_GetMac() { return g_device.Mac; }
 
 int JDY08_BeginDataRX()
 {
@@ -304,5 +309,27 @@ static int BeginRX()
     if (HAL_UART_Receive_DMA(g_device.Uart, g_device.RXBuffer, JDY08_RX_CAPACITY) != HAL_OK) {
         return -1;
     }
+    return 0;
+}
+
+/** \brief 读取并初始化 MAC 地址
+ * 
+ */
+static int InitMacAddress() {
+    if (JDY08_SendAT("AT+MAC") != HAL_OK) {
+        return -1;
+    }
+
+    HAL_Delay(200);
+
+    char* atResult = (char*)g_device.RXBuffer;
+    if (strncmp((char*)atResult, "+MAC:", 5) != 0) {
+        return -1;
+    }
+
+    // 获取到了合适的 MAC 地址，设置到设备信息里
+    memset(g_device.Mac, 0, sizeof(g_device.Mac));
+    strncpy(g_device.Mac, (const char*)(g_device.RXBuffer + 5), 12);
+
     return 0;
 }
