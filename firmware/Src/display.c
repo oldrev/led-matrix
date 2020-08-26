@@ -49,7 +49,7 @@ int Display_Update(Display* display)
 
             ledIndex += display->Settings->XSkip; //行内跳过的灯珠
         }
-        ledIndex += display->Settings->YSkip; //每行跳的灯珠数
+        ledIndex += display->Settings->YSkip; //每行之间跳的灯珠数
     }
 
     if (!WS2812_IsAvailable(&display->Device)) {
