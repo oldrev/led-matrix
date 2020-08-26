@@ -347,3 +347,4 @@ _build/
 .ninja_*
 build.ninja
 rules.ninja
+build/
