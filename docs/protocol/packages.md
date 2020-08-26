@@ -45,6 +45,34 @@ struct PackageHeader {
 
 无
 
+## `0x02` - 查询设备信息
+
+查询设备信息，目前版本仅返回 MAC 地址
+
+### 请求报文定义
+
+* 消息类型： `0x02`
+* 报文总长：`8+0` 字节
+* 报文应答：有
+
+### 请求报文结构：
+
+无
+
+### 应答报文定义
+
+* 消息类型： `0x02`
+* 报文总长度： `8+6` 字节
+
+### 应答报文结构
+
+```C
+struct HelloResponse {
+    uint8_t Mac[6]; // 6 个字节表示的蓝牙设备 MAC 地址
+};
+```
+
+
 
 ## `0x03` - 填充颜色设置
 
@@ -116,7 +144,7 @@ struct DisplaySettings {
 
 ### 应答报文结构
 
-```
+```c
 struct DisplaySettingsResponse {
     uint8_t Result;         // 0 表示成功，非 0 表示失败
 };
