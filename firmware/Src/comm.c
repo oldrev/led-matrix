@@ -107,6 +107,7 @@ int Comm_ReplyPackage(uint32_t packageID, uint8_t packageType, const void* body,
 {
     uint16_t packageSize = bodySize + COMM_REMOTE_PACKAGE_HEADER_SIZE;
     Comm_RemoteHeader header = {
+        .Magic = COMM_REMOTE_HEADER_MAGIC,
         .Type = packageType,
         .ID = packageID,
         .Size = packageSize,

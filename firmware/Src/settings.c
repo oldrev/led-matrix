@@ -8,11 +8,11 @@
 
 #include "settings.h"
 
-const AppSettings APP_SETTINGS_DEFAULT = { .DisplaySettings = { .LedCount = 500, // 总灯珠
+const AppSettings APP_SETTINGS_DEFAULT = { .DisplaySettings = { .LedCount = 600, // 总灯珠
                                                .XMax = 11, // 每行像素数
                                                .YMax = 18, // 行数
                                                .XSkip = 2, // 行内跳过的
-                                               .YSkip = 2, // 行之间跳过的
+                                               .YSkip = 0, // 行之间跳过的
                                                .Palette = {
                                                    { 0x00, 0x00, 0x00 }, // 纯黑
                                                    { 0x55, 0x55, 0x55 }, // 白/灰

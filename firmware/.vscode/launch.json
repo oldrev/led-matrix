@@ -6,7 +6,7 @@
             "request": "launch",
             "servertype": "openocd",
             "cwd": "${workspaceRoot}",
-            "executable": "./_build/Debug/bin/LEDMatrix-MK1",
+            "executable": "./build/build/Debug/bin/LEDMatrix-MK1",
             "name": "Debug (OpenOCD)",
             "device": "STM32F103C8T6",
             "armToolchainPath": "${env:GCC_ARM_HOME}/bin",
